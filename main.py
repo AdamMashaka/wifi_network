@@ -19,3 +19,19 @@ for i in profiles:
         
         
 # Linux user        
+
+import subprocess
+
+# Get the list of profiles
+data = subprocess.check_output(['nmcli', '-t', '-f', 'NAME', 'connection', 'show']).decode('utf-8').split('\n')
+profiles = [i for i in data if i]
+
+print("\n{:<30}| {:<}".format("Wi-Fi Name", "Password"))
+print("----------------------------------------------")
+
+for i in profiles:
+    try:
+        results = subprocess.check_output(['nmcli', '-s', '-g', '802-11-wireless-security.psk', 'connection', 'show', i]).decode('utf-8').strip()
+        print("{:<30}| {:<}".format(i, results))
+    except subprocess.CalledProcessError:
+        print("{:<30}| {:<}".format(i, ""))
